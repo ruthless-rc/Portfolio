@@ -1,23 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useSpring, useMotionValue, AnimatePresence } from 'framer-motion';
-import { Sparkles, Bot, X, MessageSquare, Compass, Zap, Heart } from 'lucide-react';
 
 const DIALOG_MESSAGES = [
   "Hi! I'm Rishi's AI Companion 🤖",
   "Tracking your movements ✨",
   "Check out the Featured Projects! 🚀",
   "Robotics & AI Engineer ⚡",
-  "Tap anywhere to guide me! 📍",
+  "Explore Skills & Strengths 📍",
   "Need to get in touch? Head to Contact 📧"
 ];
 
 export default function InteractiveAvatar() {
   const [isVisible, setIsVisible] = useState(true);
-  const [hasInteracted, setHasInteracted] = useState(false);
   const [isTouch, setIsTouch] = useState(false);
   const [isBlinking, setIsBlinking] = useState(false);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
-  const [showSpeech, setShowSpeech] = useState(true);
   const [eyeOffset, setEyeOffset] = useState({ x: 0, y: 0 });
   const [rotationDegree, setRotationDegree] = useState(0);
   const [isClicking, setIsClicking] = useState(false);
@@ -30,7 +27,7 @@ export default function InteractiveAvatar() {
   const rawY = useMotionValue(initialY);
 
   // Physics spring for smooth organic tracking behind cursor / finger
-  const springConfig = { stiffness: 90, damping: 18, mass: 0.6 };
+  const springConfig = { stiffness: 80, damping: 20, mass: 0.5 };
   const smoothX = useSpring(rawX, springConfig);
   const smoothY = useSpring(rawY, springConfig);
 
@@ -39,9 +36,9 @@ export default function InteractiveAvatar() {
   // Mouse & Touch Movement Listeners
   useEffect(() => {
     const handleMove = (x, y, touchDevice = false) => {
-      // Offset slightly to top-right of cursor/finger so avatar doesn't block what's under cursor/finger
-      const offsetX = touchDevice ? 0 : 35;
-      const offsetY = touchDevice ? -55 : 35;
+      // Offset comfortably away from cursor/finger so avatar NEVER covers the point of click/touch
+      const offsetX = touchDevice ? 40 : 50;
+      const offsetY = touchDevice ? -75 : 50;
 
       const destX = x + offsetX;
       const destY = y + offsetY;
@@ -63,7 +60,6 @@ export default function InteractiveAvatar() {
 
       rawX.set(destX);
       rawY.set(destY);
-      setHasInteracted(true);
     };
 
     const onMouseMove = (e) => {
@@ -118,16 +114,17 @@ export default function InteractiveAvatar() {
   useEffect(() => {
     const messageInterval = setInterval(() => {
       setCurrentMessageIndex((prev) => (prev + 1) % DIALOG_MESSAGES.length);
-    }, 6000);
+    }, 5500);
     return () => clearInterval(messageInterval);
   }, []);
 
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-40 overflow-hidden">
+    // Entire overlay container MUST be pointer-events-none so website elements (buttons, inputs, links) work 100% seamlessly
+    <div className="fixed inset-0 pointer-events-none z-30 overflow-hidden select-none">
       <motion.div
-        className="absolute top-0 left-0"
+        className="absolute top-0 left-0 pointer-events-none"
         style={{
           x: smoothX,
           y: smoothY,
@@ -135,41 +132,28 @@ export default function InteractiveAvatar() {
           translateY: '-50%',
         }}
       >
-        <div className="relative flex flex-col items-center">
+        <div className="relative flex flex-col items-center pointer-events-none">
           
-          {/* Speech Bubble Above Avatar */}
+          {/* Speech Bubble Above Avatar (Pointer-events-none so clicks pass straight through to website) */}
           <AnimatePresence mode="wait">
-            {showSpeech && (
-              <motion.div
-                key={currentMessageIndex}
-                initial={{ opacity: 0, y: 10, scale: 0.8 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -5, scale: 0.8 }}
-                transition={{ duration: 0.3 }}
-                className="mb-2 pointer-events-auto cursor-pointer"
-                onClick={() => setCurrentMessageIndex((prev) => (prev + 1) % DIALOG_MESSAGES.length)}
-              >
-                <div className="relative px-3.5 py-1.5 rounded-2xl bg-zinc-900/95 backdrop-blur-md border border-zinc-700 shadow-2xl text-white text-[11px] font-semibold flex items-center gap-1.5 whitespace-nowrap group">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                  <span>{DIALOG_MESSAGES[currentMessageIndex]}</span>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowSpeech(false);
-                    }}
-                    className="ml-1 opacity-60 hover:opacity-100 text-zinc-400 hover:text-white transition-opacity"
-                    title="Dismiss text"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                  {/* Speech Bubble Arrow */}
-                  <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-zinc-900 border-r border-b border-zinc-700 rotate-45" />
-                </div>
-              </motion.div>
-            )}
+            <motion.div
+              key={currentMessageIndex}
+              initial={{ opacity: 0, y: 8, scale: 0.8 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -5, scale: 0.8 }}
+              transition={{ duration: 0.3 }}
+              className="mb-2 pointer-events-none"
+            >
+              <div className="relative px-3.5 py-1.5 rounded-2xl bg-zinc-900/90 backdrop-blur-md border border-zinc-700/80 shadow-2xl text-white text-[11px] font-semibold flex items-center gap-1.5 whitespace-nowrap pointer-events-none">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                <span>{DIALOG_MESSAGES[currentMessageIndex]}</span>
+                {/* Speech Bubble Arrow */}
+                <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-zinc-900 border-r border-b border-zinc-700 rotate-45" />
+              </div>
+            </motion.div>
           </AnimatePresence>
 
-          {/* MAIN AVATAR BODY */}
+          {/* MAIN AVATAR BODY (Pointer-events-none) */}
           <motion.div
             animate={{
               y: [0, -6, 0],
@@ -181,18 +165,13 @@ export default function InteractiveAvatar() {
               rotate: { type: 'spring', stiffness: 200, damping: 15 },
               scale: { duration: 0.15 },
             }}
-            className="relative pointer-events-auto cursor-pointer group"
-            onClick={() => {
-              setShowSpeech(true);
-              setCurrentMessageIndex((prev) => (prev + 1) % DIALOG_MESSAGES.length);
-            }}
-            title="Click to interact with Rishi's Avatar Companion"
+            className="relative pointer-events-none"
           >
             {/* Glowing Aura Ring around Bot */}
-            <div className="absolute -inset-2 bg-gradient-to-r from-zinc-400/20 via-white/30 to-zinc-400/20 rounded-full blur-md opacity-75 group-hover:opacity-100 transition-opacity animate-pulse" />
+            <div className="absolute -inset-2 bg-gradient-to-r from-zinc-400/20 via-white/30 to-zinc-400/20 rounded-full blur-md opacity-75 animate-pulse" />
 
             {/* Futuristic Bot SVG Visual */}
-            <div className="relative w-16 h-16 sm:w-20 sm:h-20 drop-shadow-2xl">
+            <div className="relative w-16 h-16 sm:w-20 sm:h-20 drop-shadow-2xl pointer-events-none">
               <svg viewBox="0 0 100 100" className="w-full h-full">
                 <defs>
                   <linearGradient id="botHelmet" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -276,9 +255,9 @@ export default function InteractiveAvatar() {
               </svg>
             </div>
 
-            {/* Interaction Indicator Pill on Mobile/Touch */}
+            {/* Touch Active Label on Mobile */}
             {isTouch && (
-              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white text-black px-2 py-0.5 rounded-full text-[9px] font-bold shadow-md tracking-wider uppercase whitespace-nowrap opacity-90">
+              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white text-black px-2 py-0.5 rounded-full text-[9px] font-bold shadow-md tracking-wider uppercase whitespace-nowrap opacity-90 pointer-events-none">
                 Touch Active
               </div>
             )}
