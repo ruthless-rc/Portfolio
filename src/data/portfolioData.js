@@ -5,7 +5,7 @@ export const personalInfo = {
   degree: "B.E. Computer Science Engineering (2023 - 2027)",
   institution: "Shree Swaminarayan Institute of Technology",
   location: "Ahmedabad, Gujarat, India",
-  mobile: "+91 7778092578",
+
   email: "rishimadeforindia@gmail.com",
   photo: "/rishi-photo.jpg",
   bio: "Passionate Computer Science undergraduate engineering solutions at the intersection of Mobile App Development, Web Tech, IoT Systems, and AI Prompt Workflows. Leadership lead for campus robotics and hackathon operations.",
@@ -14,7 +14,7 @@ export const personalInfo = {
     linkedin: "https://www.linkedin.com/in/rishi-choudhary-0b5baa31b/",
     instagram: "https://www.instagram.com/l__rishi_choudhary__l?igsh=eWUxNHdvODZ4MmF6",
     email: "mailto:rishimadeforindia@gmail.com",
-    phone: "tel:+917778092578"
+
   }
 };
 
@@ -218,7 +218,7 @@ export const education = [
   {
     degree: "Class XII (HSC) — Senior Secondary",
     institution: "CBSE Board",
-    period: "2022 – 2023",
+    period: "2020 – 2021",
     score: "66%",
     status: "Completed",
     details: "Science stream with Physics, Chemistry, and Mathematics focus."
@@ -226,7 +226,7 @@ export const education = [
   {
     degree: "Class X (SSC) — Secondary Education",
     institution: "CBSE Board",
-    period: "2020 – 2021",
+    period: "2018 – 2019",
     score: "66%",
     status: "Completed",
     details: "Secondary academic curriculum with foundational math & science."

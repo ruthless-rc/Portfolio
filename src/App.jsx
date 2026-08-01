@@ -15,6 +15,8 @@ import {
 import SpotlightBackground from './components/SpotlightBackground';
 import ProjectModal from './components/ProjectModal';
 import WhyHireMeOverlay from './components/WhyHireMeOverlay';
+import MultilingualIntro from './components/MultilingualIntro';
+import InteractiveAvatar from './components/InteractiveAvatar';
 import { 
   Terminal, 
   Code, 
@@ -60,6 +62,8 @@ import {
 } from 'lucide-react';
 
 export default function App() {
+  const [showIntro, setShowIntro] = useState(true);
+  const [portfolioVisible, setPortfolioVisible] = useState(false);
   const [activeNav, setActiveNav] = useState('about');
   const [selectedProject, setSelectedProject] = useState(null);
   const [projectCategory, setProjectCategory] = useState('all');
@@ -68,6 +72,12 @@ export default function App() {
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [copiedPhone, setCopiedPhone] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const handleIntroComplete = () => {
+    setShowIntro(false);
+    // Slight delay so the intro's own fade-out finishes before portfolio fades in
+    setTimeout(() => setPortfolioVisible(true), 150);
+  };
   
   // Contact Form State
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
@@ -171,9 +181,25 @@ export default function App() {
     : projects.filter(p => p.shortCategory.toLowerCase() === projectCategory.toLowerCase());
 
   return (
-    <div className="min-h-screen bg-black text-zinc-100 relative overflow-x-hidden selection:bg-white selection:text-black">
+    <>
+      {/* ── Multilingual Intro Overlay ── */}
+      {showIntro && (
+        <MultilingualIntro onComplete={handleIntroComplete} />
+      )}
+
+      {/* ── Main Portfolio ── */}
+      <div
+        className="min-h-screen bg-black text-zinc-100 relative overflow-x-hidden selection:bg-white selection:text-black"
+        style={{
+          opacity: portfolioVisible ? 1 : 0,
+          transition: 'opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1)',
+        }}
+      >
       {/* Dynamic Cursor Spotlight & Background Mesh */}
       <SpotlightBackground />
+
+      {/* Interactive AI Companion Avatar (Mouse & Touch Tracking) */}
+      <InteractiveAvatar />
 
       {/* Navigation Header */}
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -1123,7 +1149,8 @@ export default function App() {
         project={selectedProject}
         onClose={() => setSelectedProject(null)}
       />
-    </div>
+      </div>
+    </>
   );
 }
 
