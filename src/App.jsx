@@ -63,7 +63,7 @@ import {
 
 export default function App() {
   const [showIntro, setShowIntro] = useState(true);
-  const [portfolioVisible, setPortfolioVisible] = useState(false);
+  const [portfolioVisible, setPortfolioVisible] = useState(true);
   const [activeNav, setActiveNav] = useState('about');
   const [selectedProject, setSelectedProject] = useState(null);
   const [projectCategory, setProjectCategory] = useState('all');
@@ -75,8 +75,6 @@ export default function App() {
 
   const handleIntroComplete = () => {
     setShowIntro(false);
-    // Slight delay so the intro's own fade-out finishes before portfolio fades in
-    setTimeout(() => setPortfolioVisible(true), 150);
   };
   
   // Contact Form State

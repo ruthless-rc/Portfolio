@@ -20,7 +20,6 @@ const GREETING_DURATION  = 1100;  // ms each greeting is visible
 const TRANSITION_DURATION = 380;  // ms fade between greetings
 
 // ─── Photo collage — tiles pulled from /public ────────────────────────────────
-// Each tile: { src, gridCol, gridRow, span } — laid out in a 4-col CSS grid
 const COLLAGE_TILES = [
   { src: '/rc.jpeg',          area: '1 / 1 / 3 / 2' },   // tall left
   { src: '/college.png',      area: '1 / 2 / 2 / 4' },   // wide top-mid
@@ -44,7 +43,6 @@ function PhotoCollage() {
         overflow: 'hidden',
       }}
     >
-      {/* Photo grid */}
       <div
         style={{
           display: 'grid',
@@ -54,7 +52,7 @@ function PhotoCollage() {
           height: '100%',
           gap: 4,
           filter: 'blur(18px) saturate(0.6) brightness(0.35)',
-          transform: 'scale(1.06)', // prevent blur edge bleed
+          transform: 'scale(1.06)',
         }}
       >
         {COLLAGE_TILES.map((tile, i) => (
@@ -82,10 +80,6 @@ function PhotoCollage() {
           </div>
         ))}
       </div>
-
-
-
-
     </div>
   );
 }
@@ -171,6 +165,36 @@ export default function MultilingualIntro({ onComplete }) {
   const [visible, setVisible]       = useState(true);
   const [prefersReduced, setPrefersReduced] = useState(false);
   const timeoutsRef = useRef([]);
+  const touchStartY = useRef(null);
+
+  const triggerExit = useCallback(() => {
+    if (phase === 'exit') return;
+    setPhase('exit');
+    setTimeout(() => onComplete?.(), 850);
+  }, [phase, onComplete]);
+
+  // Touch Swipe Up and Scroll Handlers
+  const handleTouchStart = (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartY.current = e.touches[0].clientY;
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (!touchStartY.current || phase === 'exit') return;
+    const currentY = e.touches[0].clientY;
+    const diffY = touchStartY.current - currentY;
+    if (diffY > 35) { // Swiped UP by >35px
+      triggerExit();
+    }
+  };
+
+  const handleWheel = (e) => {
+    if (phase === 'exit') return;
+    if (e.deltaY > 15) { // Mouse scroll down / trackpad swipe up
+      triggerExit();
+    }
+  };
 
   // Detect prefers-reduced-motion
   useEffect(() => {
@@ -183,7 +207,7 @@ export default function MultilingualIntro({ onComplete }) {
 
   // Greeting cycle
   useEffect(() => {
-    if (prefersReduced) return;
+    if (prefersReduced || phase === 'exit') return;
 
     const schedule = (fn, delay) => {
       const id = setTimeout(fn, delay);
@@ -217,17 +241,16 @@ export default function MultilingualIntro({ onComplete }) {
     schedule(() => cycleGreeting(0), 250);
 
     return () => timeoutsRef.current.forEach(clearTimeout);
-  }, [prefersReduced]);
+  }, [prefersReduced, phase]);
 
-  // After reveal phase, auto-exit after ~2.8s
+  // After reveal phase, auto-swipe exit after ~2.8s
   useEffect(() => {
     if (phase !== 'reveal') return;
     const id = setTimeout(() => {
-      setPhase('exit');
-      setTimeout(() => onComplete?.(), 900);
+      triggerExit();
     }, 2800);
     return () => clearTimeout(id);
-  }, [phase, onComplete]);
+  }, [phase, triggerExit]);
 
   if (prefersReduced) return null;
 
@@ -239,6 +262,9 @@ export default function MultilingualIntro({ onComplete }) {
   return (
     <div
       aria-label="Portfolio intro animation"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onWheel={handleWheel}
       style={{
         position: 'fixed',
         inset: 0,
@@ -247,9 +273,13 @@ export default function MultilingualIntro({ onComplete }) {
         alignItems: 'center',
         justifyContent: 'center',
         overflow: 'hidden',
-        opacity: isExit ? 0 : 1,
+        background: '#04020a',
+        transform: isExit ? 'translateY(-105%)' : 'translateY(0%)',
+        opacity: isExit ? 0.95 : 1,
+        borderRadius: isExit ? '0 0 50px 50px' : '0px',
+        boxShadow: isExit ? '0 30px 100px rgba(0, 0, 0, 0.95)' : 'none',
         transition: isExit
-          ? 'opacity 0.85s cubic-bezier(0.4, 0, 0.2, 1)'
+          ? 'transform 0.85s cubic-bezier(0.76, 0, 0.24, 1), opacity 0.85s ease-in-out, border-radius 0.85s ease'
           : 'none',
         pointerEvents: isExit ? 'none' : 'auto',
       }}
@@ -260,9 +290,7 @@ export default function MultilingualIntro({ onComplete }) {
       {/* ── Layer 1: Subtle floating particles ── */}
       <ParticleCanvas />
 
-
-
-      {/* ── Layer 3: Greeting Card ── */}
+      {/* ── Layer 2: Greeting Card ── */}
       {!isReveal && (
         <div
           style={{
@@ -502,6 +530,60 @@ export default function MultilingualIntro({ onComplete }) {
               animation: 'shimmer 2s ease-in-out infinite',
             }}
           />
+        </div>
+      )}
+
+      {/* ── Swipe Up / Skip Indicator at Bottom ── */}
+      {!isExit && (
+        <div
+          onClick={triggerExit}
+          style={{
+            position: 'absolute',
+            bottom: 24,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 25,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 6,
+            cursor: 'pointer',
+            opacity: 0.85,
+            transition: 'opacity 0.3s ease, transform 0.3s ease',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 40,
+              height: 40,
+              borderRadius: '50%',
+              background: 'rgba(255, 255, 255, 0.12)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              border: '1px solid rgba(255, 255, 255, 0.25)',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
+              color: '#ffffff',
+              fontSize: 18,
+              fontWeight: 'bold',
+            }}
+          >
+            ↑
+          </div>
+          <span
+            style={{
+              fontSize: 10,
+              fontWeight: 700,
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: 'rgba(255, 255, 255, 0.85)',
+              textShadow: '0 2px 8px rgba(0,0,0,0.8)',
+            }}
+          >
+            Swipe Up to Enter
+          </span>
         </div>
       )}
 
