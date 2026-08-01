@@ -165,36 +165,12 @@ export default function MultilingualIntro({ onComplete }) {
   const [visible, setVisible]       = useState(true);
   const [prefersReduced, setPrefersReduced] = useState(false);
   const timeoutsRef = useRef([]);
-  const touchStartY = useRef(null);
 
   const triggerExit = useCallback(() => {
     if (phase === 'exit') return;
     setPhase('exit');
     setTimeout(() => onComplete?.(), 850);
   }, [phase, onComplete]);
-
-  // Touch Swipe Up and Scroll Handlers
-  const handleTouchStart = (e) => {
-    if (e.touches && e.touches.length > 0) {
-      touchStartY.current = e.touches[0].clientY;
-    }
-  };
-
-  const handleTouchMove = (e) => {
-    if (!touchStartY.current || phase === 'exit') return;
-    const currentY = e.touches[0].clientY;
-    const diffY = touchStartY.current - currentY;
-    if (diffY > 35) { // Swiped UP by >35px
-      triggerExit();
-    }
-  };
-
-  const handleWheel = (e) => {
-    if (phase === 'exit') return;
-    if (e.deltaY > 15) { // Mouse scroll down / trackpad swipe up
-      triggerExit();
-    }
-  };
 
   // Detect prefers-reduced-motion
   useEffect(() => {
@@ -262,9 +238,6 @@ export default function MultilingualIntro({ onComplete }) {
   return (
     <div
       aria-label="Portfolio intro animation"
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onWheel={handleWheel}
       style={{
         position: 'fixed',
         inset: 0,
@@ -533,59 +506,6 @@ export default function MultilingualIntro({ onComplete }) {
         </div>
       )}
 
-      {/* ── Swipe Up / Skip Indicator at Bottom ── */}
-      {!isExit && (
-        <div
-          onClick={triggerExit}
-          style={{
-            position: 'absolute',
-            bottom: 24,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 25,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 6,
-            cursor: 'pointer',
-            opacity: 0.85,
-            transition: 'opacity 0.3s ease, transform 0.3s ease',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: 40,
-              height: 40,
-              borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.12)',
-              backdropFilter: 'blur(16px)',
-              WebkitBackdropFilter: 'blur(16px)',
-              border: '1px solid rgba(255, 255, 255, 0.25)',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
-              color: '#ffffff',
-              fontSize: 18,
-              fontWeight: 'bold',
-            }}
-          >
-            ↑
-          </div>
-          <span
-            style={{
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              color: 'rgba(255, 255, 255, 0.85)',
-              textShadow: '0 2px 8px rgba(0,0,0,0.8)',
-            }}
-          >
-            Swipe Up to Enter
-          </span>
-        </div>
-      )}
 
       {/* Keyframe */}
       <style>{`
