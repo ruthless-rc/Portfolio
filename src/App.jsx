@@ -18,6 +18,7 @@ import ProjectModal from './components/ProjectModal';
 import WhyHireMeOverlay from './components/WhyHireMeOverlay';
 import MultilingualIntro from './components/MultilingualIntro';
 import InteractiveAvatar from './components/InteractiveAvatar';
+import HostelReportPage from './components/HostelReportPage';
 import { 
   Terminal, 
   Code, 
@@ -75,6 +76,31 @@ export default function App() {
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [copiedPhone, setCopiedPhone] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [currentView, setCurrentView] = useState(() => {
+    return window.location.pathname === '/hostel-report' ? 'hostel-report' : 'home';
+  });
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (window.location.pathname === '/hostel-report') {
+        setCurrentView('hostel-report');
+      } else {
+        setCurrentView('home');
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const openHostelReport = () => {
+    window.history.pushState({}, '', '/hostel-report');
+    setCurrentView('hostel-report');
+  };
+
+  const goBackToHome = () => {
+    window.history.pushState({}, '', '/');
+    setCurrentView('home');
+  };
 
   const handleIntroComplete = () => {
     setShowIntro(false);
@@ -180,6 +206,10 @@ export default function App() {
   const filteredProjects = projectCategory === 'all' 
     ? projects 
     : projects.filter(p => p.shortCategory.toLowerCase() === projectCategory.toLowerCase());
+
+  if (currentView === 'hostel-report') {
+    return <HostelReportPage onBack={goBackToHome} />;
+  }
 
   return (
     <>
@@ -665,123 +695,194 @@ export default function App() {
           {/* Project Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <AnimatePresence mode="wait">
-              {filteredProjects.map((proj) => (
-                <motion.div
-                  key={proj.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.4 }}
-                  className="glass-card rounded-3xl border border-zinc-800 glass-card-hover flex flex-col justify-between overflow-hidden group"
-                >
-                  {/* Image Cover Preview */}
-                  <div className="relative aspect-[16/9] overflow-hidden bg-zinc-950">
-                    {proj.demo && proj.demo !== '#' ? (
-                      <a href={proj.demo} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
+              {filteredProjects.map((proj) => {
+                if (proj.id === 'hostel-management') {
+                  return (
+                    <motion.div
+                      key={proj.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.4 }}
+                      onClick={openHostelReport}
+                      className="glass-card rounded-3xl border border-zinc-800 flex flex-col justify-between overflow-hidden cursor-pointer bg-zinc-950/90"
+                    >
+                      {/* Image Cover Preview */}
+                      <div className="relative aspect-[16/9] overflow-hidden bg-zinc-950">
                         <img
                           src={proj.image}
                           alt={proj.title}
-                          className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700 cursor-pointer"
+                          className="w-full h-full object-cover object-top"
                         />
-                      </a>
-                    ) : (
-                      <img
-                        src={proj.image}
-                        alt={proj.title}
-                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
-                      />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-85 pointer-events-none" />
-                    
-                    <span className="absolute top-4 left-4 text-xs font-bold px-3 py-1 rounded-full bg-zinc-950/90 backdrop-blur-md text-zinc-200 border border-zinc-800">
-                      {proj.category}
-                    </span>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-85 pointer-events-none" />
+                        
+                        <span className="absolute top-4 left-4 text-xs font-bold px-3 py-1 rounded-full bg-zinc-950/90 backdrop-blur-md text-zinc-200 border border-zinc-800">
+                          {proj.category}
+                        </span>
 
-                    {/* Quick Preview Trigger Button */}
-                    <button
-                      onClick={() => setSelectedProject(proj)}
-                      className="absolute bottom-4 right-4 px-3.5 py-2 rounded-xl bg-white hover:bg-zinc-200 text-black font-semibold text-xs transition-all flex items-center gap-1.5 shadow-lg backdrop-blur-md z-10"
-                    >
-                      <Eye className="w-3.5 h-3.5 text-black" />
-                      <span>Quick View</span>
-                    </button>
-                  </div>
+                        <span className="absolute bottom-4 right-4 text-xs font-semibold px-3 py-1.5 rounded-xl bg-zinc-900/90 text-white border border-zinc-700 backdrop-blur-md flex items-center gap-1.5 shadow-lg">
+                          Project Report →
+                        </span>
+                      </div>
 
-                  {/* Details Body */}
-                  <div className="p-7 space-y-4">
-                    {proj.demo && proj.demo !== '#' ? (
-                      <a href={proj.demo} target="_blank" rel="noopener noreferrer" className="block">
-                        <h3 className="text-xl font-bold text-white group-hover:text-zinc-300 transition-colors flex items-center gap-2">
+                      {/* Details Body */}
+                      <div className="p-7 space-y-4">
+                        <h3 className="text-xl font-bold text-white flex items-center justify-between">
                           <span>{proj.title}</span>
-                          <ExternalLink className="w-4 h-4 text-zinc-400 group-hover:text-white transition-colors shrink-0 inline" />
+                          <span className="text-xs text-zinc-400 font-semibold bg-zinc-900 px-2.5 py-1 rounded-lg border border-zinc-800">View Report →</span>
                         </h3>
-                      </a>
-                    ) : (
-                      <h3 className="text-xl font-bold text-white group-hover:text-zinc-300 transition-colors">
-                        {proj.title}
-                      </h3>
-                    )}
 
-                    <p className="text-zinc-300 text-xs leading-relaxed">
-                      {proj.description}
-                    </p>
+                        <p className="text-zinc-300 text-xs leading-relaxed">
+                          {proj.description}
+                        </p>
 
-                    {/* Features List */}
-                    <div className="space-y-2 pt-2">
-                      {proj.features.map((feat, fIdx) => (
-                        <div key={fIdx} className="flex items-start gap-2 text-xs text-zinc-300">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-white shrink-0 mt-0.5" />
-                          <span>{feat}</span>
+                        {/* Features List */}
+                        <div className="space-y-2 pt-2">
+                          {proj.features.map((feat, fIdx) => (
+                            <div key={fIdx} className="flex items-start gap-2 text-xs text-zinc-300">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-white shrink-0 mt-0.5" />
+                              <span>{feat}</span>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+
+                        {/* Tech Badges */}
+                        <div className="pt-4 border-t border-zinc-800">
+                          <div className="flex flex-wrap gap-2">
+                            {proj.techStack.map((tech, tIdx) => (
+                              <span
+                                key={tIdx}
+                                className="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-300 border border-zinc-800"
+                              >
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                }
+
+                return (
+                  <motion.div
+                    key={proj.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.4 }}
+                    className="glass-card rounded-3xl border border-zinc-800 glass-card-hover flex flex-col justify-between overflow-hidden group"
+                  >
+                    {/* Image Cover Preview */}
+                    <div className="relative aspect-[16/9] overflow-hidden bg-zinc-950">
+                      {proj.demo && proj.demo !== '#' ? (
+                        <a href={proj.demo} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
+                          <img
+                            src={proj.image}
+                            alt={proj.title}
+                            className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700 cursor-pointer"
+                          />
+                        </a>
+                      ) : (
+                        <img
+                          src={proj.image}
+                          alt={proj.title}
+                          className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-85 pointer-events-none" />
+                      
+                      <span className="absolute top-4 left-4 text-xs font-bold px-3 py-1 rounded-full bg-zinc-950/90 backdrop-blur-md text-zinc-200 border border-zinc-800">
+                        {proj.category}
+                      </span>
+
+                      {/* Quick Preview Trigger Button */}
+                      <button
+                        onClick={() => setSelectedProject(proj)}
+                        className="absolute bottom-4 right-4 px-3.5 py-2 rounded-xl bg-white hover:bg-zinc-200 text-black font-semibold text-xs transition-all flex items-center gap-1.5 shadow-lg backdrop-blur-md z-10"
+                      >
+                        <Eye className="w-3.5 h-3.5 text-black" />
+                        <span>Quick View</span>
+                      </button>
                     </div>
 
-                    {/* Tech Badges & Live Action Links */}
-                    <div className="pt-4 border-t border-zinc-800 space-y-3">
-                      <div className="flex flex-wrap gap-2">
-                        {proj.techStack.map((tech, tIdx) => (
-                          <span
-                            key={tIdx}
-                            className="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-300 border border-zinc-800"
-                          >
-                            {tech}
-                          </span>
+                    {/* Details Body */}
+                    <div className="p-7 space-y-4">
+                      {proj.demo && proj.demo !== '#' ? (
+                        <a href={proj.demo} target="_blank" rel="noopener noreferrer" className="block">
+                          <h3 className="text-xl font-bold text-white group-hover:text-zinc-300 transition-colors flex items-center gap-2">
+                            <span>{proj.title}</span>
+                            <ExternalLink className="w-4 h-4 text-zinc-400 group-hover:text-white transition-colors shrink-0 inline" />
+                          </h3>
+                        </a>
+                      ) : (
+                        <h3 className="text-xl font-bold text-white group-hover:text-zinc-300 transition-colors">
+                          {proj.title}
+                        </h3>
+                      )}
+
+                      <p className="text-zinc-300 text-xs leading-relaxed">
+                        {proj.description}
+                      </p>
+
+                      {/* Features List */}
+                      <div className="space-y-2 pt-2">
+                        {proj.features.map((feat, fIdx) => (
+                          <div key={fIdx} className="flex items-start gap-2 text-xs text-zinc-300">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-white shrink-0 mt-0.5" />
+                            <span>{feat}</span>
+                          </div>
                         ))}
                       </div>
 
-                      <div className="pt-1 grid grid-cols-2 gap-2">
-                        {proj.demo && proj.demo !== '#' ? (
-                          <a
-                            href={proj.demo}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-3.5 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black font-bold text-xs shadow-lg transition-all flex items-center justify-center gap-1.5"
-                          >
-                            <ExternalLink className="w-3.5 h-3.5 text-black" />
-                            <span>Live Website ↗</span>
-                          </a>
-                        ) : (
+                      {/* Tech Badges & Live Action Links */}
+                      <div className="pt-4 border-t border-zinc-800 space-y-3">
+                        <div className="flex flex-wrap gap-2">
+                          {proj.techStack.map((tech, tIdx) => (
+                            <span
+                              key={tIdx}
+                              className="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-300 border border-zinc-800"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+
+                        <div className="pt-1 grid grid-cols-2 gap-2">
+                          {proj.demo && proj.demo !== '#' ? (
+                            <a
+                              href={proj.demo}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-3.5 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black font-bold text-xs shadow-lg transition-all flex items-center justify-center gap-1.5"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5 text-black" />
+                              <span>Live Website ↗</span>
+                            </a>
+                          ) : (
+                            <button
+                              onClick={() => setSelectedProject(proj)}
+                              className="px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 text-xs font-semibold"
+                            >
+                              View Specs
+                            </button>
+                          )}
+
                           <button
                             onClick={() => setSelectedProject(proj)}
-                            className="px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 text-xs font-semibold"
+                            className="px-3.5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-200 font-semibold text-xs transition-all flex items-center justify-center gap-1.5"
                           >
-                            View Specs
+                            <Eye className="w-3.5 h-3.5 text-zinc-300" />
+                            <span>Full Report</span>
                           </button>
-                        )}
-
-                        <button
-                          onClick={() => setSelectedProject(proj)}
-                          className="px-3.5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-200 font-semibold text-xs transition-all flex items-center justify-center gap-1.5"
-                        >
-                          <Eye className="w-3.5 h-3.5 text-zinc-300" />
-                          <span>Full Report</span>
-                        </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                );
+              })}
             </AnimatePresence>
           </div>
         </div>
