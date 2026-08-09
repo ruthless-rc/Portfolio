@@ -353,7 +353,7 @@ export default function MultilingualIntro({ onComplete }) {
 
             {/* Main greeting line 1 */}
             <p
-              dir={isArabic ? 'rtl' : 'ltr'}
+              dir="ltr"
               style={{
                 fontSize: 'clamp(2.1rem, 6.5vw, 3.8rem)',
                 fontWeight: 800,
@@ -373,13 +373,13 @@ export default function MultilingualIntro({ onComplete }) {
 
             {/* Greeting line 2 */}
             <p
-              dir={isArabic ? 'rtl' : 'ltr'}
+              dir="ltr"
               style={{
                 fontSize: 'clamp(0.9rem, 2.4vw, 1.15rem)',
                 fontWeight: 400,
                 color: 'rgba(200,200,230,0.78)',
                 lineHeight: 1.65,
-                letterSpacing: isArabic ? 0 : '0.01em',
+                letterSpacing: '0.01em',
               }}
             >
               {greeting.line2}
