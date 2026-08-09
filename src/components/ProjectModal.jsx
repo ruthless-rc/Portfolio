@@ -71,12 +71,16 @@ export default function ProjectModal({ project, onClose }) {
                 </h2>
               </div>
 
-              {projectUrl && projectUrl !== '#' && (
+              {(projectUrl || project.id === 'hostel-management') && (
                 <a
-                  href={projectUrl}
+                  href={projectUrl || "https://hostel-management-app-nu.vercel.app/login"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-5 py-2.5 rounded-2xl bg-white hover:bg-zinc-200 text-black font-bold text-xs sm:text-sm shadow-xl transition-all flex items-center gap-2 shrink-0"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.open(projectUrl || "https://hostel-management-app-nu.vercel.app/login", '_blank');
+                  }}
+                  className="px-5 py-2.5 rounded-2xl bg-white hover:bg-zinc-200 text-black font-bold text-xs sm:text-sm shadow-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer"
                 >
                   <ExternalLink className="w-4 h-4 text-black" />
                   <span>Open Live Portal</span>
@@ -203,12 +207,16 @@ export default function ProjectModal({ project, onClose }) {
                   <Github className="w-4 h-4" />
                   <span>View Source</span>
                 </a>
-                {projectUrl && projectUrl !== '#' && (
+                {(projectUrl || project.id === 'hostel-management') && (
                   <a
-                    href={projectUrl}
+                    href={projectUrl || "https://hostel-management-app-nu.vercel.app/login"}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-500/25 transition-all flex items-center gap-2"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.open(projectUrl || "https://hostel-management-app-nu.vercel.app/login", '_blank');
+                    }}
+                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-500/25 transition-all flex items-center gap-2 cursor-pointer"
                   >
                     <ExternalLink className="w-4 h-4" />
                     <span>Visit Live Portal</span>

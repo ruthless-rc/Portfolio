@@ -66,7 +66,11 @@ export default function HostelReportPage({ onBack }) {
               href={liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 sm:px-5 py-2 rounded-xl bg-white hover:bg-zinc-200 text-black font-bold text-xs sm:text-sm shadow-xl shadow-white/10 transition-all flex items-center gap-2"
+              onClick={(e) => {
+                e.preventDefault();
+                window.open('https://hostel-management-app-nu.vercel.app/login', '_blank');
+              }}
+              className="px-4 sm:px-5 py-2 rounded-xl bg-white hover:bg-zinc-200 text-black font-bold text-xs sm:text-sm shadow-xl shadow-white/10 transition-all flex items-center gap-2 cursor-pointer"
             >
               <ExternalLink className="w-4 h-4 text-black" />
               <span>Launch Live Portal ↗</span>
@@ -129,7 +133,11 @@ export default function HostelReportPage({ onBack }) {
                   href={liveUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-5 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black font-bold text-xs sm:text-sm shadow-xl backdrop-blur-md transition-all flex items-center gap-2"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.open('https://hostel-management-app-nu.vercel.app/login', '_blank');
+                  }}
+                  className="px-5 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black font-bold text-xs sm:text-sm shadow-xl backdrop-blur-md transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <ExternalLink className="w-4 h-4 text-black" />
                   <span>Live App URL ↗</span>
@@ -353,7 +361,11 @@ export default function HostelReportPage({ onBack }) {
               href={liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-7 py-3.5 rounded-2xl bg-white hover:bg-zinc-200 text-black font-bold text-xs sm:text-sm shadow-xl shadow-white/10 hover:-translate-y-0.5 transition-all flex items-center gap-2"
+              onClick={(e) => {
+                e.preventDefault();
+                window.open('https://hostel-management-app-nu.vercel.app/login', '_blank');
+              }}
+              className="px-7 py-3.5 rounded-2xl bg-white hover:bg-zinc-200 text-black font-bold text-xs sm:text-sm shadow-xl shadow-white/10 hover:-translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
             >
               <ExternalLink className="w-4 h-4 text-black" />
               <span>Launch Live Website ↗</span>

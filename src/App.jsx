@@ -856,7 +856,11 @@ export default function App() {
                               href={proj.demo}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="px-3.5 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black font-bold text-xs shadow-lg transition-all flex items-center justify-center gap-1.5"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                window.open(proj.demo, '_blank');
+                              }}
+                              className="px-3.5 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black font-bold text-xs shadow-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                             >
                               <ExternalLink className="w-3.5 h-3.5 text-black" />
                               <span>Live Website ↗</span>
