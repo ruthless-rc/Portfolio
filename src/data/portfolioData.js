@@ -153,21 +153,59 @@ export const projects = [
   {
     id: "hostel-management",
     title: "Hostel Operations & Management System",
-    category: "Management Software",
+    category: "Native Android & Web App",
     shortCategory: "Software",
     image: "/hostel.png",
-    description: "Full-featured Java administrative software streamlining room allocation, student indexing, and maintenance complaint logs.",
-    fullDescription: "An end-to-end desktop management suite for institutional dormitories. Features automated room allocation logic, indexed student records, fee status reporting, and a centralized maintenance ticketing system.",
-    techStack: ["Java", "OOP Principles", "Data Structures", "Database Logic"],
+    description: "Modern Native Android & Web application engineered for dynamic room allocation, bed inventory monitoring, and gender-partitioned hostel administration.",
+    fullDescription: "The Hostel Management System is an end-to-end platform designed to solve room allocation friction, prevent double bookings, and eliminate manual register paperwork. Built using modern Android architecture components (Jetpack Room, LiveData, ViewModel, Kotlin Coroutines, ViewBinding) and deployed as a responsive web platform.",
+    techStack: ["Kotlin 1.9+", "Android SDK 36", "Jetpack Room DB", "MVVM + Repository", "Coroutines", "ViewBinding", "Gradle 8.9"],
     features: [
-      "Automated room allocation & vacancy analytics",
-      "Indexed student profile database with fast searching",
-      "Maintenance request logs and fee status reporting"
+      "Role-Based Security: Privilege separation between Institutional Administrators and Resident Students",
+      "Gender-Segregated Allocation Logic: Automated room visibility filtering to strictly display Male rooms to Male students and Female rooms to Female students",
+      "Real-Time Analytics & Inventory Tracking: Dynamic computation of total capacity, total beds, occupied beds, and real-time available beds",
+      "Atomic Bed Booking Mechanism: Thread-safe decrement of available bed counts upon instant student reservation",
+      "Offline-First Persistence: Powered by SQLite via Android Jetpack Room DB (UserDao & RoomDao interfaces)"
     ],
-    metrics: "Streamlines 500+ dormitory record logs",
+    metrics: "Instant <1s thread-safe bed booking & real-time analytics",
     github: "https://github.com",
-    demo: "#",
-    gradient: "from-zinc-800 to-zinc-950"
+    demo: "https://hostel-management-app-nu.vercel.app/login",
+    liveUrl: "https://hostel-management-app-nu.vercel.app/login",
+    gradient: "from-zinc-800 to-zinc-950",
+    architectureSpecs: {
+      package: "com.example.hostel",
+      targetSdk: "Android SDK 36 (Min SDK 24)",
+      runtime: "Kotlin 1.9+ / JVM 17",
+      pattern: "MVVM + Repository Pattern",
+      database: "Jetpack Room DB 2.7.0-alpha01 (SQLite)",
+      concurrency: "Kotlin Coroutines (Dispatchers.IO)",
+      stateManagement: "ViewModel & LiveData 2.9.0"
+    },
+    reportSections: [
+      {
+        tabId: "overview",
+        tabLabel: "📋 Project Overview",
+        heading: "Project Overview & Objectives",
+        content: "Managing educational institution residential hostels manually using paper registers leads to double bookings, data inconsistency, and lack of occupancy visibility. This system solves operational challenges by providing a synchronized, role-driven platform with full administrative governance and student self-service."
+      },
+      {
+        tabId: "architecture",
+        tabLabel: "🏗️ MVVM Architecture",
+        heading: "System Architecture & Layer Responsibilities",
+        content: "Implements Google's recommended MVVM (Model-View-ViewModel) + Repository pattern. UI View Layer (LoginActivity, RegisterActivity, AdminDashboardActivity, StudentDashboardActivity) handles rendering, ViewModel holds state, and Repository guarantees Dispatchers.IO safety."
+      },
+      {
+        tabId: "database",
+        tabLabel: "🗄️ Database & Schema",
+        heading: "Room Entities & DAO Specifications",
+        content: "Room DB consists of two core entities: 'User' (id, name, collegeName, password, gender, role) and 'Room' (id, roomNumber, genderType, totalBeds, availableBeds). UserDao & RoomDao execute atomic SQL operations for room allocation and bed reservations."
+      },
+      {
+        tabId: "workflows",
+        tabLabel: "⚡ Modules & Workflows",
+        heading: "Admin Governance & Student Self-Service Modules",
+        content: "Admin Module provides dynamic occupancy dashboards (Occupied Beds = Total Beds - Available Beds) and room configuration. Student Module enforces gender filtering (Male students only see Male rooms) and instant bed reservation with color-coded availability badges."
+      }
+    ]
   }
 ];
 
