@@ -20,7 +20,10 @@ export default function ProjectModal({ project, onClose }) {
     ? project.reportSections.find(s => s.tabId === activeTab) || project.reportSections[0]
     : null;
 
-  const projectUrl = project.liveUrl || project.demo;
+  const targetUrl = project.id === 'hostel-management'
+    ? 'https://hostel-management-app-nu.vercel.app/login'
+    : (project.liveUrl || project.demo);
+  const isRealUrl = targetUrl && targetUrl !== '#';
 
   return (
     <AnimatePresence>
@@ -71,18 +74,23 @@ export default function ProjectModal({ project, onClose }) {
                 </h2>
               </div>
 
-              {(projectUrl || project.id === 'hostel-management') && (
+              {isRealUrl ? (
                 <a
-                  href={projectUrl || "https://hostel-management-app-nu.vercel.app/login"}
+                  href={targetUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    window.open(projectUrl || "https://hostel-management-app-nu.vercel.app/login", '_blank');
-                  }}
                   className="px-5 py-2.5 rounded-2xl bg-white hover:bg-zinc-200 text-black font-bold text-xs sm:text-sm shadow-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer"
                 >
                   <ExternalLink className="w-4 h-4 text-black" />
+                  <span>Open Live Portal</span>
+                </a>
+              ) : (
+                <a
+                  href="#"
+                  onClick={(e) => e.preventDefault()}
+                  className="px-5 py-2.5 rounded-2xl bg-slate-900 border border-slate-800 text-slate-400 font-bold text-xs sm:text-sm transition-all flex items-center gap-2 shrink-0 cursor-pointer"
+                >
+                  <ExternalLink className="w-4 h-4 text-slate-400" />
                   <span>Open Live Portal</span>
                 </a>
               )}
@@ -207,16 +215,21 @@ export default function ProjectModal({ project, onClose }) {
                   <Github className="w-4 h-4" />
                   <span>View Source</span>
                 </a>
-                {(projectUrl || project.id === 'hostel-management') && (
+                {isRealUrl ? (
                   <a
-                    href={projectUrl || "https://hostel-management-app-nu.vercel.app/login"}
+                    href={targetUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      window.open(projectUrl || "https://hostel-management-app-nu.vercel.app/login", '_blank');
-                    }}
                     className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-500/25 transition-all flex items-center gap-2 cursor-pointer"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    <span>Visit Live Portal</span>
+                  </a>
+                ) : (
+                  <a
+                    href="#"
+                    onClick={(e) => e.preventDefault()}
+                    className="px-6 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 font-bold text-xs sm:text-sm transition-all flex items-center gap-2 shrink-0 cursor-pointer"
                   >
                     <ExternalLink className="w-4 h-4" />
                     <span>Visit Live Portal</span>

@@ -705,33 +705,40 @@ export default function App() {
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
                       transition={{ duration: 0.4 }}
-                      onClick={openHostelReport}
-                      className="glass-card rounded-3xl border border-zinc-800 flex flex-col justify-between overflow-hidden cursor-pointer bg-zinc-950/90"
+                      className="glass-card rounded-3xl border border-zinc-800 glass-card-hover flex flex-col justify-between overflow-hidden group bg-zinc-950/90"
                     >
                       {/* Image Cover Preview */}
                       <div className="relative aspect-[16/9] overflow-hidden bg-zinc-950">
-                        <img
-                          src={proj.image}
-                          alt={proj.title}
-                          className="w-full h-full object-cover object-top"
-                        />
+                        <a href="https://hostel-management-app-nu.vercel.app/login" target="_blank" rel="noopener noreferrer" className="block w-full h-full">
+                          <img
+                            src={proj.image}
+                            alt={proj.title}
+                            className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700 cursor-pointer"
+                          />
+                        </a>
                         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-85 pointer-events-none" />
                         
                         <span className="absolute top-4 left-4 text-xs font-bold px-3 py-1 rounded-full bg-zinc-950/90 backdrop-blur-md text-zinc-200 border border-zinc-800">
                           {proj.category}
                         </span>
 
-                        <span className="absolute bottom-4 right-4 text-xs font-semibold px-3 py-1.5 rounded-xl bg-zinc-900/90 text-white border border-zinc-700 backdrop-blur-md flex items-center gap-1.5 shadow-lg">
-                          Project Report →
-                        </span>
+                        <button
+                          onClick={openHostelReport}
+                          className="absolute bottom-4 right-4 text-xs font-semibold px-3.5 py-2 rounded-xl bg-white hover:bg-zinc-200 text-black shadow-lg backdrop-blur-md z-10 flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <Eye className="w-3.5 h-3.5 text-black" />
+                          <span>Project Report →</span>
+                        </button>
                       </div>
 
                       {/* Details Body */}
                       <div className="p-7 space-y-4">
-                        <h3 className="text-xl font-bold text-white flex items-center justify-between">
-                          <span>{proj.title}</span>
-                          <span className="text-xs text-zinc-400 font-semibold bg-zinc-900 px-2.5 py-1 rounded-lg border border-zinc-800">View Report →</span>
-                        </h3>
+                        <a href="https://hostel-management-app-nu.vercel.app/login" target="_blank" rel="noopener noreferrer" className="block">
+                          <h3 className="text-xl font-bold text-white group-hover:text-zinc-300 transition-colors flex items-center gap-2">
+                            <span>{proj.title}</span>
+                            <ExternalLink className="w-4 h-4 text-zinc-400 group-hover:text-white transition-colors shrink-0 inline" />
+                          </h3>
+                        </a>
 
                         <p className="text-zinc-300 text-xs leading-relaxed">
                           {proj.description}
@@ -747,8 +754,8 @@ export default function App() {
                           ))}
                         </div>
 
-                        {/* Tech Badges */}
-                        <div className="pt-4 border-t border-zinc-800">
+                        {/* Tech Badges & Live Action Links */}
+                        <div className="pt-4 border-t border-zinc-800 space-y-3">
                           <div className="flex flex-wrap gap-2">
                             {proj.techStack.map((tech, tIdx) => (
                               <span
@@ -758,6 +765,26 @@ export default function App() {
                                 {tech}
                               </span>
                             ))}
+                          </div>
+
+                          <div className="pt-1 grid grid-cols-2 gap-2">
+                            <a
+                              href="https://hostel-management-app-nu.vercel.app/login"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-3.5 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black font-bold text-xs shadow-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5 text-black" />
+                              <span>Live Project ↗</span>
+                            </a>
+
+                            <button
+                              onClick={openHostelReport}
+                              className="px-3.5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-200 font-semibold text-xs transition-all flex items-center justify-center gap-1.5"
+                            >
+                              <Eye className="w-3.5 h-3.5 text-zinc-300" />
+                              <span>Full Report</span>
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -818,8 +845,8 @@ export default function App() {
                           </h3>
                         </a>
                       ) : (
-                        <h3 className="text-xl font-bold text-white group-hover:text-zinc-300 transition-colors">
-                          {proj.title}
+                        <h3 className="text-xl font-bold text-white group-hover:text-zinc-300 transition-colors flex items-center gap-2">
+                          <span>{proj.title}</span>
                         </h3>
                       )}
 
@@ -856,22 +883,20 @@ export default function App() {
                               href={proj.demo}
                               target="_blank"
                               rel="noopener noreferrer"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                window.open(proj.demo, '_blank');
-                              }}
                               className="px-3.5 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black font-bold text-xs shadow-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                             >
                               <ExternalLink className="w-3.5 h-3.5 text-black" />
-                              <span>Live Website ↗</span>
+                              <span>Live Project ↗</span>
                             </a>
                           ) : (
-                            <button
-                              onClick={() => setSelectedProject(proj)}
-                              className="px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 text-xs font-semibold"
+                            <a
+                              href="#"
+                              onClick={(e) => e.preventDefault()}
+                              className="px-3.5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                             >
-                              View Specs
-                            </button>
+                              <ExternalLink className="w-3.5 h-3.5 text-zinc-400" />
+                              <span>Live Project ↗</span>
+                            </a>
                           )}
 
                           <button

@@ -109,7 +109,8 @@ export const projects = [
     ],
     metrics: "Instant <1s hazard detection response time",
     github: "https://github.com",
-    demo: "",
+    demo: "#",
+    liveUrl: "#",
     gradient: "from-zinc-800 to-zinc-950"
   },
   {
@@ -128,7 +129,8 @@ export const projects = [
     ],
     metrics: "Empowering 100+ student guidance pathways",
     github: "https://github.com",
-    demo: "",
+    demo: "#",
+    liveUrl: "#",
     gradient: "from-zinc-800 to-zinc-950"
   },
   {
@@ -147,7 +149,8 @@ export const projects = [
     ],
     metrics: "Automates repetitive daily developer routines",
     github: "https://github.com",
-    demo: "",
+    demo: "#",
+    liveUrl: "#",
     gradient: "from-zinc-800 to-zinc-950"
   },
   {
