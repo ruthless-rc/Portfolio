@@ -12,13 +12,11 @@ import {
   certifications, 
   trainingMentorship 
 } from './data/portfolioData';
-import { translations } from './data/translations';
 import SpotlightBackground from './components/SpotlightBackground';
 import ProjectModal from './components/ProjectModal';
 import WhyHireMeOverlay from './components/WhyHireMeOverlay';
 import MultilingualIntro from './components/MultilingualIntro';
 import InteractiveAvatar from './components/InteractiveAvatar';
-import HostelReportPage from './components/HostelReportPage';
 import { 
   Terminal, 
   Code, 
@@ -64,8 +62,6 @@ import {
 } from 'lucide-react';
 
 export default function App() {
-  const [lang, setLang] = useState('en');
-  const t = translations[lang];
   const [showIntro, setShowIntro] = useState(true);
   const [portfolioVisible, setPortfolioVisible] = useState(true);
   const [activeNav, setActiveNav] = useState('about');
@@ -76,31 +72,6 @@ export default function App() {
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [copiedPhone, setCopiedPhone] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [currentView, setCurrentView] = useState(() => {
-    return window.location.pathname === '/hostel-report' ? 'hostel-report' : 'home';
-  });
-
-  useEffect(() => {
-    const handlePopState = () => {
-      if (window.location.pathname === '/hostel-report') {
-        setCurrentView('hostel-report');
-      } else {
-        setCurrentView('home');
-      }
-    };
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
-
-  const openHostelReport = () => {
-    window.history.pushState({}, '', '/hostel-report');
-    setCurrentView('hostel-report');
-  };
-
-  const goBackToHome = () => {
-    window.history.pushState({}, '', '/');
-    setCurrentView('home');
-  };
 
   const handleIntroComplete = () => {
     setShowIntro(false);
@@ -207,12 +178,13 @@ export default function App() {
     ? projects 
     : projects.filter(p => p.shortCategory.toLowerCase() === projectCategory.toLowerCase());
 
-  if (currentView === 'hostel-report') {
-    return <HostelReportPage onBack={goBackToHome} />;
-  }
-
   return (
     <>
+      {/* ── Multilingual Intro Overlay ── */}
+      {showIntro && (
+        <MultilingualIntro onComplete={handleIntroComplete} />
+      )}
+
       {/* ── Main Portfolio ── */}
       <div
         className="min-h-screen bg-black text-zinc-100 relative overflow-x-hidden selection:bg-white selection:text-black"
@@ -269,7 +241,7 @@ export default function App() {
                 Rishi Choudhary
               </span>
               <span className="text-[11px] text-zinc-400 font-medium hidden sm:block">
-                {t.subtitle}
+                CS Engineer & Developer
               </span>
             </div>
           </a>
@@ -277,58 +249,41 @@ export default function App() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1 glass-pill px-3 py-1.5 rounded-full border border-zinc-800 shadow-inner">
             {[
-              { label: t.nav.about, href: '#about' },
-              { label: t.nav.strengths, href: '#strengths' },
-              { label: t.nav.skills, href: '#skills' },
-              { label: t.nav.projects, href: '#projects' },
-              { label: t.nav.leadership, href: '#leadership' },
-              { label: t.nav.education, href: '#education' },
-              { label: t.nav.contact, href: '#contact' },
+              { label: 'About', href: '#about' },
+              { label: 'Strengths', href: '#strengths' },
+              { label: 'Skills', href: '#skills' },
+              { label: 'Projects', href: '#projects' },
+              { label: 'Leadership', href: '#leadership' },
+              { label: 'Education', href: '#education' },
+              { label: 'Contact', href: '#contact' },
             ].map((item) => (
               <a
-                key={item.href}
+                key={item.label}
                 href={item.href}
-                className="px-3.5 py-1.5 text-xs font-semibold rounded-full text-zinc-300 hover:text-white hover:bg-zinc-800 transition-all"
+                className="px-4 py-1.5 text-xs font-semibold rounded-full text-zinc-300 hover:text-white hover:bg-zinc-800 transition-all"
               >
                 {item.label}
               </a>
             ))}
           </nav>
 
-          {/* Quick CTA & Language Switcher */}
-          <div className="hidden md:flex items-center gap-2.5">
-            <button
-              onClick={() => setLang(lang === 'en' ? 'hi' : 'en')}
-              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-2xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-200 transition-all shadow-md cursor-pointer"
-              title="Switch Language (English / Hindi)"
-            >
-              <span className="text-sm">{lang === 'en' ? '🇺🇸' : '🇮🇳'}</span>
-              <span>{lang === 'en' ? 'EN' : 'हिंदी'}</span>
-            </button>
-
+          {/* Quick CTA */}
+          <div className="hidden md:flex items-center gap-3">
             <a
               href="#contact"
               className="px-5 py-2.5 text-xs font-bold rounded-2xl bg-white hover:bg-zinc-200 text-black shadow-lg shadow-white/10 hover:scale-105 transition-all"
             >
-              {t.getInTouch}
+              Get in Touch
             </a>
           </div>
 
-          {/* Mobile Toggle & Language button */}
-          <div className="md:hidden flex items-center gap-2">
-            <button
-              onClick={() => setLang(lang === 'en' ? 'hi' : 'en')}
-              className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-bold rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-200"
-            >
-              <span>{lang === 'en' ? '🇺🇸 EN' : '🇮🇳 हिंदी'}</span>
-            </button>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
+          {/* Mobile Toggle */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white"
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
 
         {/* Mobile Dropdown */}
@@ -340,16 +295,16 @@ export default function App() {
             className="md:hidden bg-zinc-950 border-b border-zinc-800 px-4 pt-4 pb-6 space-y-2 mt-2"
           >
             {[
-              { label: t.nav.about, href: '#about' },
-              { label: t.nav.strengths, href: '#strengths' },
-              { label: t.nav.skills, href: '#skills' },
-              { label: t.nav.projects, href: '#projects' },
-              { label: t.nav.leadership, href: '#leadership' },
-              { label: t.nav.education, href: '#education' },
-              { label: t.nav.contact, href: '#contact' },
+              { label: 'About', href: '#about' },
+              { label: 'Strengths', href: '#strengths' },
+              { label: 'Skills', href: '#skills' },
+              { label: 'Projects', href: '#projects' },
+              { label: 'Leadership', href: '#leadership' },
+              { label: 'Education', href: '#education' },
+              { label: 'Contact', href: '#contact' },
             ].map((item) => (
               <a
-                key={item.href}
+                key={item.label}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className="block px-3 py-2 rounded-xl text-sm font-medium text-zinc-300 hover:bg-zinc-800 hover:text-white"
@@ -385,16 +340,16 @@ export default function App() {
               {/* Shimmer Badge */}
               <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full glass-pill border border-zinc-700 text-zinc-200 text-xs font-semibold shadow-lg">
                 <span className="w-2 h-2 rounded-full bg-white animate-ping" />
-                <span>{t.badge}</span>
+                <span>Pursuing B.E. Computer Science Engineering (2023–2027)</span>
               </div>
 
               {/* Large Impact Heading */}
               <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-none text-white font-display">
-                {t.heroTitle1}<span className="text-gradient-primary">{t.heroTitle2}</span>
+                Building the Future of <span className="text-gradient-primary">Software & Intelligent Systems</span>
               </h1>
 
               <p className="text-lg sm:text-xl font-medium text-zinc-300 leading-relaxed">
-                {t.bioIntro}<span className="font-bold text-white">Rishi Choudhary</span>. {lang === 'hi' ? t.bioText : personalInfo.bio}
+                Hi, I'm <span className="font-bold text-white">Rishi Choudhary</span>. {personalInfo.bio}
               </p>
 
               {/* CTA Action Buttons */}
@@ -404,14 +359,14 @@ export default function App() {
                   className="px-7 py-4 rounded-2xl bg-white hover:bg-zinc-200 text-black font-bold text-sm shadow-xl shadow-white/10 hover:-translate-y-0.5 transition-all flex items-center gap-2.5"
                 >
                   <Briefcase className="w-4 h-4 text-black" />
-                  <span>{t.exploreProjects}</span>
+                  <span>Explore Projects</span>
                 </a>
                 <a
                   href="#contact"
                   className="px-7 py-4 rounded-2xl glass-card border border-zinc-700 hover:border-zinc-500 text-white font-semibold text-sm hover:bg-zinc-900 transition-all flex items-center gap-2.5"
                 >
                   <Mail className="w-4 h-4 text-white" />
-                  <span>{t.getInTouch}</span>
+                  <span>Get in Touch</span>
                 </a>
                 <a
                   href="/RISHI_CV (1).pdf"
@@ -420,7 +375,7 @@ export default function App() {
                   className="px-6 py-4 rounded-2xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white font-medium text-sm transition-all flex items-center gap-2"
                 >
                   <Download className="w-4 h-4 text-zinc-400" />
-                  <span>{t.resumePdf}</span>
+                  <span>Resume PDF</span>
                 </a>
                 <a
                   href={personalInfo.socials.linkedin}
@@ -530,13 +485,13 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-14">
             <span className="text-xs font-bold uppercase tracking-widest text-zinc-200 bg-zinc-900 px-3.5 py-1.5 rounded-full border border-zinc-800">
-              {t.coreStrengths}
+              Core Competencies
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-4 font-display">
-              {t.strengthsTitle}
+              Mindset & Engineering Strengths
             </h2>
             <p className="text-zinc-400 text-sm mt-2">
-              {t.strengthsDesc}
+              Key pillars driving software development, event operations, and project delivery.
             </p>
           </div>
 
@@ -582,13 +537,13 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-14">
             <span className="text-xs font-bold uppercase tracking-widest text-zinc-200 bg-zinc-900 px-3.5 py-1.5 rounded-full border border-zinc-800">
-              {t.techMatrix}
+              Technical Matrix
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-4 font-display">
-              {t.skillsTitle}
+              Skills & Tech Ecosystem
             </h2>
             <p className="text-zinc-400 text-sm mt-2">
-              {t.skillsDesc}
+              Comprehensive proficiency across programming languages, web & mobile stacks, and CS fundamentals.
             </p>
           </div>
 
@@ -659,13 +614,13 @@ export default function App() {
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
             <div>
               <span className="text-xs font-bold uppercase tracking-widest text-zinc-200 bg-zinc-900 px-3.5 py-1.5 rounded-full border border-zinc-800">
-                {t.portfolioShowcase}
+                Portfolio Showcase
               </span>
               <h2 className="text-3xl sm:text-5xl font-extrabold text-white mt-4 font-display">
-                {t.featuredProjects}
+                Featured Projects
               </h2>
               <p className="text-zinc-400 text-sm mt-2 max-w-xl">
-                {t.projectsDesc}
+                Engineering applications across IoT, Web Applications, Artificial Intelligence, and System Software.
               </p>
             </div>
 
@@ -690,223 +645,73 @@ export default function App() {
           {/* Project Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <AnimatePresence mode="wait">
-              {filteredProjects.map((proj) => {
-                if (proj.id === 'hostel-management') {
-                  return (
-                    <motion.div
-                      key={proj.id}
-                      layout
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.4 }}
-                      className="glass-card rounded-3xl border border-zinc-800 glass-card-hover flex flex-col justify-between overflow-hidden group bg-zinc-950/90"
+              {filteredProjects.map((proj) => (
+                <motion.div
+                  key={proj.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.4 }}
+                  className="glass-card rounded-3xl border border-zinc-800 glass-card-hover flex flex-col justify-between overflow-hidden group"
+                >
+                  {/* Image Cover Preview */}
+                  <div className="relative aspect-[16/9] overflow-hidden bg-zinc-950">
+                    <img
+                      src={proj.image}
+                      alt={proj.title}
+                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-85" />
+                    
+                    <span className="absolute top-4 left-4 text-xs font-bold px-3 py-1 rounded-full bg-zinc-950/90 backdrop-blur-md text-zinc-200 border border-zinc-800">
+                      {proj.category}
+                    </span>
+
+                    {/* Quick Preview Trigger Button */}
+                    <button
+                      onClick={() => setSelectedProject(proj)}
+                      className="absolute bottom-4 right-4 px-3.5 py-2 rounded-xl bg-white hover:bg-zinc-200 text-black font-semibold text-xs transition-all flex items-center gap-1.5 shadow-lg backdrop-blur-md"
                     >
-                      {/* Image Cover Preview */}
-                      <div className="relative aspect-[16/9] overflow-hidden bg-zinc-950">
-                        <a href="https://hostel-management-app-nu.vercel.app/login" target="_blank" rel="noopener noreferrer" className="block w-full h-full">
-                          <img
-                            src={proj.image}
-                            alt={proj.title}
-                            className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700 cursor-pointer"
-                          />
-                        </a>
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-85 pointer-events-none" />
-                        
-                        <span className="absolute top-4 left-4 text-xs font-bold px-3 py-1 rounded-full bg-zinc-950/90 backdrop-blur-md text-zinc-200 border border-zinc-800">
-                          {proj.category}
-                        </span>
+                      <Eye className="w-3.5 h-3.5 text-black" />
+                      <span>Quick View</span>
+                    </button>
+                  </div>
 
-                        <button
-                          onClick={openHostelReport}
-                          className="absolute bottom-4 right-4 text-xs font-semibold px-3.5 py-2 rounded-xl bg-white hover:bg-zinc-200 text-black shadow-lg backdrop-blur-md z-10 flex items-center gap-1.5 cursor-pointer"
+                  {/* Details Body */}
+                  <div className="p-7 space-y-4">
+                    <h3 className="text-xl font-bold text-white group-hover:text-zinc-300 transition-colors">
+                      {proj.title}
+                    </h3>
+
+                    <p className="text-zinc-300 text-xs leading-relaxed">
+                      {proj.description}
+                    </p>
+
+                    {/* Features List */}
+                    <div className="space-y-2 pt-2">
+                      {proj.features.map((feat, fIdx) => (
+                        <div key={fIdx} className="flex items-start gap-2 text-xs text-zinc-300">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-white shrink-0 mt-0.5" />
+                          <span>{feat}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Tech Badges */}
+                    <div className="flex flex-wrap gap-2 pt-4 border-t border-zinc-800">
+                      {proj.techStack.map((tech, tIdx) => (
+                        <span
+                          key={tIdx}
+                          className="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-300 border border-zinc-800"
                         >
-                          <Eye className="w-3.5 h-3.5 text-black" />
-                          <span>Project Report →</span>
-                        </button>
-                      </div>
-
-                      {/* Details Body */}
-                      <div className="p-7 space-y-4">
-                        <a href="https://hostel-management-app-nu.vercel.app/login" target="_blank" rel="noopener noreferrer" className="block">
-                          <h3 className="text-xl font-bold text-white group-hover:text-zinc-300 transition-colors flex items-center gap-2">
-                            <span>{proj.title}</span>
-                            <ExternalLink className="w-4 h-4 text-zinc-400 group-hover:text-white transition-colors shrink-0 inline" />
-                          </h3>
-                        </a>
-
-                        <p className="text-zinc-300 text-xs leading-relaxed">
-                          {proj.description}
-                        </p>
-
-                        {/* Features List */}
-                        <div className="space-y-2 pt-2">
-                          {proj.features.map((feat, fIdx) => (
-                            <div key={fIdx} className="flex items-start gap-2 text-xs text-zinc-300">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-white shrink-0 mt-0.5" />
-                              <span>{feat}</span>
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* Tech Badges & Live Action Links */}
-                        <div className="pt-4 border-t border-zinc-800 space-y-3">
-                          <div className="flex flex-wrap gap-2">
-                            {proj.techStack.map((tech, tIdx) => (
-                              <span
-                                key={tIdx}
-                                className="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-300 border border-zinc-800"
-                              >
-                                {tech}
-                              </span>
-                            ))}
-                          </div>
-
-                          <div className="pt-1 grid grid-cols-2 gap-2">
-                            <a
-                              href="https://hostel-management-app-nu.vercel.app/login"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="px-3.5 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black font-bold text-xs shadow-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                            >
-                              <ExternalLink className="w-3.5 h-3.5 text-black" />
-                              <span>Live Project ↗</span>
-                            </a>
-
-                            <button
-                              onClick={openHostelReport}
-                              className="px-3.5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-200 font-semibold text-xs transition-all flex items-center justify-center gap-1.5"
-                            >
-                              <Eye className="w-3.5 h-3.5 text-zinc-300" />
-                              <span>Full Report</span>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  );
-                }
-
-                return (
-                  <motion.div
-                    key={proj.id}
-                    layout
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.4 }}
-                    className="glass-card rounded-3xl border border-zinc-800 glass-card-hover flex flex-col justify-between overflow-hidden group"
-                  >
-                    {/* Image Cover Preview */}
-                    <div className="relative aspect-[16/9] overflow-hidden bg-zinc-950">
-                      {proj.demo && proj.demo !== '#' ? (
-                        <a href={proj.demo} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
-                          <img
-                            src={proj.image}
-                            alt={proj.title}
-                            className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700 cursor-pointer"
-                          />
-                        </a>
-                      ) : (
-                        <img
-                          src={proj.image}
-                          alt={proj.title}
-                          className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
-                        />
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-85 pointer-events-none" />
-                      
-                      <span className="absolute top-4 left-4 text-xs font-bold px-3 py-1 rounded-full bg-zinc-950/90 backdrop-blur-md text-zinc-200 border border-zinc-800">
-                        {proj.category}
-                      </span>
-
-                      {/* Quick Preview Trigger Button */}
-                      <button
-                        onClick={() => setSelectedProject(proj)}
-                        className="absolute bottom-4 right-4 px-3.5 py-2 rounded-xl bg-white hover:bg-zinc-200 text-black font-semibold text-xs transition-all flex items-center gap-1.5 shadow-lg backdrop-blur-md z-10"
-                      >
-                        <Eye className="w-3.5 h-3.5 text-black" />
-                        <span>Quick View</span>
-                      </button>
+                          {tech}
+                        </span>
+                      ))}
                     </div>
-
-                    {/* Details Body */}
-                    <div className="p-7 space-y-4">
-                      {proj.demo && proj.demo !== '#' ? (
-                        <a href={proj.demo} target="_blank" rel="noopener noreferrer" className="block">
-                          <h3 className="text-xl font-bold text-white group-hover:text-zinc-300 transition-colors flex items-center gap-2">
-                            <span>{proj.title}</span>
-                            <ExternalLink className="w-4 h-4 text-zinc-400 group-hover:text-white transition-colors shrink-0 inline" />
-                          </h3>
-                        </a>
-                      ) : (
-                        <h3 className="text-xl font-bold text-white group-hover:text-zinc-300 transition-colors flex items-center gap-2">
-                          <span>{proj.title}</span>
-                        </h3>
-                      )}
-
-                      <p className="text-zinc-300 text-xs leading-relaxed">
-                        {proj.description}
-                      </p>
-
-                      {/* Features List */}
-                      <div className="space-y-2 pt-2">
-                        {proj.features.map((feat, fIdx) => (
-                          <div key={fIdx} className="flex items-start gap-2 text-xs text-zinc-300">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-white shrink-0 mt-0.5" />
-                            <span>{feat}</span>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Tech Badges & Live Action Links */}
-                      <div className="pt-4 border-t border-zinc-800 space-y-3">
-                        <div className="flex flex-wrap gap-2">
-                          {proj.techStack.map((tech, tIdx) => (
-                            <span
-                              key={tIdx}
-                              className="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-300 border border-zinc-800"
-                            >
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
-
-                        <div className="pt-1 grid grid-cols-2 gap-2">
-                          {proj.demo && proj.demo !== '#' ? (
-                            <a
-                              href={proj.demo}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="px-3.5 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black font-bold text-xs shadow-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                            >
-                              <ExternalLink className="w-3.5 h-3.5 text-black" />
-                              <span>Live Project ↗</span>
-                            </a>
-                          ) : (
-                            <a
-                              href="#"
-                              onClick={(e) => e.preventDefault()}
-                              className="px-3.5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                            >
-                              <ExternalLink className="w-3.5 h-3.5 text-zinc-400" />
-                              <span>Live Project ↗</span>
-                            </a>
-                          )}
-
-                          <button
-                            onClick={() => setSelectedProject(proj)}
-                            className="px-3.5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-200 font-semibold text-xs transition-all flex items-center justify-center gap-1.5"
-                          >
-                            <Eye className="w-3.5 h-3.5 text-zinc-300" />
-                            <span>Full Report</span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
+                  </div>
+                </motion.div>
+              ))}
             </AnimatePresence>
           </div>
         </div>
@@ -927,13 +732,13 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="text-xs font-bold uppercase tracking-widest text-zinc-200 bg-zinc-900 px-3.5 py-1.5 rounded-full border border-zinc-800">
-              {t.communityGov}
+              Community & Governance
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-4 font-display">
-              {t.leadershipTitle}
+              Leadership & Event Operations
             </h2>
             <p className="text-zinc-400 text-sm mt-2">
-              {t.leadershipDesc}
+              Leading the campus Robotics Club, coordinating AI hackathons, and hosting flagship engineering fests.
             </p>
           </div>
 

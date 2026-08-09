@@ -1,13 +1,23 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
-// ─── Greeting Data (English & Hindi Only) ─────────────────────────────────────
+// ─── Greeting Data ────────────────────────────────────────────────────────────
 const GREETINGS = [
-  { flag: '🇺🇸', lang: 'English', line1: 'Hello!',          line2: 'Welcome to my portfolio.' },
-  { flag: '🇮🇳', lang: 'Hindi',   line1: 'नमस्ते!',          line2: 'मेरे पोर्टफोलियो में आपका स्वागत है।' },
+  { flag: '🇺🇸', lang: 'English',    line1: 'Hello!',          line2: 'Welcome to my portfolio.' },
+  { flag: '🇮🇳', lang: 'Hindi',      line1: 'नमस्ते!',          line2: 'मेरे पोर्टफोलियो में आपका स्वागत है।' },
+  { flag: '🇫🇷', lang: 'French',     line1: 'Bonjour !',        line2: 'Bienvenue sur mon portfolio.' },
+  { flag: '🇪🇸', lang: 'Spanish',    line1: '¡Hola!',           line2: 'Bienvenido a mi portafolio.' },
+  { flag: '🇩🇪', lang: 'German',     line1: 'Hallo!',           line2: 'Willkommen in meinem Portfolio.' },
+  { flag: '🇮🇹', lang: 'Italian',    line1: 'Ciao!',            line2: 'Benvenuto nel mio portfolio.' },
+  { flag: '🇵🇹', lang: 'Portuguese', line1: 'Olá!',             line2: 'Bem-vindo ao meu portfólio.' },
+  { flag: '🇷🇺', lang: 'Russian',    line1: 'Здравствуйте!',    line2: 'Добро пожаловать в мое портфолио.' },
+  { flag: '🇨🇳', lang: 'Chinese',    line1: '你好！',            line2: '欢迎来到我的作品集。' },
+  { flag: '🇯🇵', lang: 'Japanese',   line1: 'こんにちは！',       line2: '私のポートフォリオへようこそ。' },
+  { flag: '🇰🇷', lang: 'Korean',     line1: '안녕하세요!',        line2: '제 포트폴리오에 오신 것을 환영합니다.' },
+  { flag: '🇸🇦', lang: 'Arabic',     line1: 'مرحبًا!',          line2: 'أهلاً بك في معرض أعمالي.' },
 ];
 
-const GREETING_DURATION  = 900;  // ms each greeting is visible
-const TRANSITION_DURATION = 300;  // ms fade between greetings
+const GREETING_DURATION  = 1100;  // ms each greeting is visible
+const TRANSITION_DURATION = 380;  // ms fade between greetings
 
 // ─── Photo collage — tiles pulled from /public ────────────────────────────────
 const COLLAGE_TILES = [
@@ -209,12 +219,12 @@ export default function MultilingualIntro({ onComplete }) {
     return () => timeoutsRef.current.forEach(clearTimeout);
   }, [prefersReduced, phase]);
 
-  // After reveal phase, auto-swipe exit after ~1.6s
+  // After reveal phase, auto-swipe exit after ~2.8s
   useEffect(() => {
     if (phase !== 'reveal') return;
     const id = setTimeout(() => {
       triggerExit();
-    }, 1600);
+    }, 2800);
     return () => clearTimeout(id);
   }, [phase, triggerExit]);
 
@@ -222,7 +232,8 @@ export default function MultilingualIntro({ onComplete }) {
 
   const isExit   = phase === 'exit';
   const isReveal = phase === 'reveal';
-  const greeting = GREETINGS[greetingIdx] || GREETINGS[0];
+  const greeting = GREETINGS[greetingIdx];
+  const isArabic = greeting?.lang === 'Arabic';
 
   return (
     <div
@@ -246,39 +257,6 @@ export default function MultilingualIntro({ onComplete }) {
         pointerEvents: isExit ? 'none' : 'auto',
       }}
     >
-      {/* Quick Skip Button */}
-      {!isExit && (
-        <button
-          onClick={triggerExit}
-          style={{
-            position: 'absolute',
-            top: 24,
-            right: 24,
-            zIndex: 100,
-            background: 'rgba(255, 255, 255, 0.08)',
-            backdropFilter: 'blur(12px)',
-            border: '1px solid rgba(255, 255, 255, 0.18)',
-            borderRadius: 100,
-            padding: '8px 18px',
-            color: '#e2e8f0',
-            fontSize: 12,
-            fontWeight: 600,
-            cursor: 'pointer',
-            letterSpacing: '0.04em',
-            transition: 'all 0.2s ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.18)';
-            e.currentTarget.style.color = '#ffffff';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
-            e.currentTarget.style.color = '#e2e8f0';
-          }}
-        >
-          Skip Intro ➔
-        </button>
-      )}
       {/* ── Layer 0: Blurred photo collage ── */}
       <PhotoCollage />
 
@@ -353,7 +331,7 @@ export default function MultilingualIntro({ onComplete }) {
 
             {/* Main greeting line 1 */}
             <p
-              dir="ltr"
+              dir={isArabic ? 'rtl' : 'ltr'}
               style={{
                 fontSize: 'clamp(2.1rem, 6.5vw, 3.8rem)',
                 fontWeight: 800,
@@ -373,13 +351,13 @@ export default function MultilingualIntro({ onComplete }) {
 
             {/* Greeting line 2 */}
             <p
-              dir="ltr"
+              dir={isArabic ? 'rtl' : 'ltr'}
               style={{
                 fontSize: 'clamp(0.9rem, 2.4vw, 1.15rem)',
                 fontWeight: 400,
                 color: 'rgba(200,200,230,0.78)',
                 lineHeight: 1.65,
-                letterSpacing: '0.01em',
+                letterSpacing: isArabic ? 0 : '0.01em',
               }}
             >
               {greeting.line2}
