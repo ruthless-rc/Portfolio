@@ -213,11 +213,6 @@ export default function App() {
 
   return (
     <>
-      {/* ── Multilingual Intro Overlay ── */}
-      {showIntro && (
-        <MultilingualIntro onComplete={handleIntroComplete} />
-      )}
-
       {/* ── Main Portfolio ── */}
       <div
         className="min-h-screen bg-black text-zinc-100 relative overflow-x-hidden selection:bg-white selection:text-black"
